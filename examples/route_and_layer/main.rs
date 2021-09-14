@@ -1,5 +1,6 @@
-use axum::handler::get;
-use axum_router::Router;
+#![recursion_limit = "1024"]
+
+use axum::{Router, handler::get};
 
 mod middleware;
 

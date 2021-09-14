@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2018"
 
 [dependencies]
-axum = "0.2"
+axum = { git = "https://github.com/KaiJewson/axum", branch = "router-routes" }
 bytes = "1"
 futures-util = "0.3"
 http = "0.2"
