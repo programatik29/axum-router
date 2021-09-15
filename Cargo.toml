@@ -10,10 +10,11 @@ futures-util = "0.3"
 http = "0.2"
 http-body = "0.4"
 hyper = "0.14"
+matchit = "0.4"
+route-recognizer = "0.3"
 sync_wrapper = "0.1"
 tower-layer = "0.3"
 tower-service = "0.3"
-route-recognizer = "0.3"
 
 [dependencies.tower]
 default-features = false

@@ -7,6 +7,7 @@ use hyper::body::Body;
 use std::{
     convert::Infallible,
     marker::PhantomData,
+    sync::Arc,
     task::{Context, Poll},
 };
 use tower::{BoxError, ServiceExt};
@@ -14,28 +15,29 @@ use tower_layer::Layer;
 use tower_service::Service;
 
 mod box_service;
+mod router;
 
 use box_service::BoxServiceFuture;
 
 type BoxService<B, E> = box_service::BoxService<Request<B>, Response<BoxBody>, E>;
 
-pub struct Router<S, B = Body, E = Infallible> {
+pub struct RouterBuilder<S, B = Body, E = Infallible> {
     service: S,
     routes: Vec<Route<B, E>>,
-    recognizer: route_recognizer::Router<usize>,
+    router: router::Selected<usize>,
 }
 
-impl<B, E> Router<RouterService<E>, B, E> {
+impl<B, E> RouterBuilder<RouterService<E>, B, E> {
     pub fn new() -> Self {
         Self {
             service: RouterService::new(),
             routes: Vec::new(),
-            recognizer: route_recognizer::Router::new(),
+            router: router::Core::new(),
         }
     }
 }
 
-impl<S, B, E> Router<S, B, E>
+impl<S, B, E> RouterBuilder<S, B, E>
 where
     S: Clone,
 {
@@ -50,12 +52,12 @@ where
         ResBody: HttpBody<Data = Bytes> + Send + Sync + 'static,
         ResBody::Error: Into<BoxError>,
     {
-        self.recognizer.add(&path, self.routes.len());
+        self.router.add(&path, self.routes.len()).unwrap();
         self.routes.push(Route::new(path, service));
         self
     }
 
-    pub fn layer<L>(self, layer: L) -> Router<Layered<L::Service>, B, E>
+    pub fn layer<L>(self, layer: L) -> RouterBuilder<Layered<L::Service>, B, E>
     where
         L: Layer<S>,
     {
@@ -64,16 +66,43 @@ where
         self.map(|svc| Layered::new(index, layer.layer(svc)))
     }
 
-    fn map<F, Svc>(self, f: F) -> Router<Svc, B, E>
+    pub fn build(self) -> Router<S, B, E> {
+        Router {
+            service: self.service,
+            routes: Arc::new(self.routes),
+            router: Arc::new(self.router),
+        }
+    }
+
+    fn map<F, Svc>(self, f: F) -> RouterBuilder<Svc, B, E>
     where
         F: FnOnce(S) -> Svc,
     {
-        Router {
+        RouterBuilder {
             service: f(self.service),
             routes: self.routes,
-            recognizer: self.recognizer,
+            router: self.router,
         }
     }
+}
+
+impl<S, B, E> Clone for RouterBuilder<S, B, E>
+where
+    S: Clone,
+{
+    fn clone(&self) -> Self {
+        Self {
+            service: self.service.clone(),
+            routes: self.routes.clone(),
+            router: self.router.clone(),
+        }
+    }
+}
+
+pub struct Router<S, B, E> {
+    service: S,
+    routes: Arc<Vec<Route<B, E>>>,
+    router: Arc<router::Selected<usize>>,
 }
 
 impl<S, B, E> Clone for Router<S, B, E>
@@ -84,7 +113,7 @@ where
         Self {
             service: self.service.clone(),
             routes: self.routes.clone(),
-            recognizer: self.recognizer.clone(),
+            router: self.router.clone(),
         }
     }
 }
@@ -106,8 +135,8 @@ where
     fn call(&mut self, mut req: Request<B>) -> Self::Future {
         let path = req.uri().path();
 
-        if let Ok(matched) = self.recognizer.recognize(path) {
-            let index = **matched.handler();
+        if let Ok(matched) = self.router.route(path) {
+            let index = *matched.value;
             let service = self.routes[index].service.clone();
 
             let route_extension = RouteExtension::new(index, service);

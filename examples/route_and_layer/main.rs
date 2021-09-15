@@ -1,5 +1,5 @@
 use axum::{extract::Extension, handler::get};
-use axum_router::Router;
+use axum_router::RouterBuilder;
 use http::uri::Uri;
 
 mod middleware;
@@ -8,7 +8,7 @@ use middleware::{NotFoundLayer, TestMiddlewareLayer};
 
 #[tokio::main]
 async fn main() {
-    let app = Router::new()
+    let app = RouterBuilder::new()
         .layer(NotFoundLayer::new())
         .route("/", get(handler))
         .route("/a", get(handler))
@@ -40,7 +40,8 @@ async fn main() {
         .route("/w", get(handler))
         .route("/x", get(handler))
         .route("/y", get(handler))
-        .route("/z", get(handler));
+        .route("/z", get(handler))
+        .build();
 
     axum_server::bind("127.0.0.1:3000")
         .serve(app)
