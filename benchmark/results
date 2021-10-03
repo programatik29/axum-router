@@ -4,53 +4,53 @@ Beginning round 1...
 Benchmarking 500 connections @ http://localhost:3000 for 10 second(s)
   Latencies:
     Avg      Stdev    Min      Max      
-    1.26ms   0.65ms   0.02ms   202.21ms  
+    1.26ms   0.63ms   0.02ms   27.38ms  
   Requests:
-    Total: 3797697 Req/Sec: 379746.20
+    Total: 3801002 Req/Sec: 380078.58
   Transfer:
-    Total: 416.50 MB Transfer Rate: 41.65 MB/Sec
+    Total: 416.87 MB Transfer Rate: 41.68 MB/Sec
 
 Light Routing:
 Beginning round 1...
 Benchmarking 500 connections @ http://localhost:3001 for 10 second(s)
   Latencies:
     Avg      Stdev    Min      Max      
-    1.34ms   0.68ms   0.03ms   79.11ms  
+    1.38ms   0.69ms   0.03ms   121.05ms  
   Requests:
-    Total: 3666778 Req/Sec: 366652.42
+    Total: 3586396 Req/Sec: 358617.52
   Transfer:
-    Total: 402.14 MB Transfer Rate: 40.21 MB/Sec
+    Total: 393.33 MB Transfer Rate: 39.33 MB/Sec
 
 Heavy Routing:
 Beginning round 1...
 Benchmarking 500 connections @ http://localhost:3002 for 10 second(s)
   Latencies:
     Avg      Stdev    Min      Max      
-    1.35ms   0.68ms   0.03ms   88.51ms  
+    1.71ms   1.00ms   0.03ms   131.52ms  
   Requests:
-    Total: 3659158 Req/Sec: 365896.60
+    Total: 2861054 Req/Sec: 286082.62
   Transfer:
-    Total: 401.31 MB Transfer Rate: 40.13 MB/Sec
+    Total: 313.78 MB Transfer Rate: 31.38 MB/Sec
 
 Light Routing Middleware:
 Beginning round 1...
 Benchmarking 500 connections @ http://localhost:3003 for 10 second(s)
   Latencies:
     Avg      Stdev    Min      Max      
-    1.40ms   0.83ms   0.03ms   80.46ms  
+    1.39ms   0.87ms   0.02ms   86.05ms  
   Requests:
-    Total: 3529182 Req/Sec: 352896.38
+    Total: 3554846 Req/Sec: 355466.20
   Transfer:
-    Total: 387.05 MB Transfer Rate: 38.70 MB/Sec
+    Total: 389.87 MB Transfer Rate: 38.98 MB/Sec
 
 Heavy Routing Middleware:
 Beginning round 1...
 Benchmarking 500 connections @ http://localhost:3004 for 10 second(s)
   Latencies:
     Avg      Stdev    Min      Max      
-    1.37ms   0.71ms   0.03ms   74.93ms  
+    1.71ms   0.89ms   0.03ms   96.30ms  
   Requests:
-    Total: 3584135 Req/Sec: 358394.67
+    Total: 2879406 Req/Sec: 287918.07
   Transfer:
-    Total: 393.08 MB Transfer Rate: 39.31 MB/Sec
+    Total: 315.79 MB Transfer Rate: 31.58 MB/Sec
 

@@ -1,5 +1,6 @@
-use axum::handler::get;
-use axum_router::Router;
+#![recursion_limit = "1024"]
+
+use axum::{handler::get, Router};
 
 mod middleware;
 
@@ -19,19 +20,13 @@ async fn main() {
 async fn no_routing(addr: &'static str) {
     let app = get(handler);
 
-    axum_server::bind(addr)
-        .serve(app)
-        .await
-        .unwrap();
+    axum_server::bind(addr).serve(app).await.unwrap();
 }
 
 async fn light_routing(addr: &'static str) {
     let app = Router::new().route("/", get(handler));
 
-    axum_server::bind(addr)
-        .serve(app)
-        .await
-        .unwrap();
+    axum_server::bind(addr).serve(app).await.unwrap();
 }
 
 async fn heavy_routing(addr: &'static str) {
@@ -64,10 +59,7 @@ async fn heavy_routing(addr: &'static str) {
         .route("/y", get(handler))
         .route("/z", get(handler));
 
-    axum_server::bind(addr)
-        .serve(app)
-        .await
-        .unwrap();
+    axum_server::bind(addr).serve(app).await.unwrap();
 }
 
 async fn light_routing_middleware(addr: &'static str) {
@@ -79,10 +71,7 @@ async fn light_routing_middleware(addr: &'static str) {
         .layer(NoopLayer::new())
         .layer(NoopLayer::new());
 
-    axum_server::bind(addr)
-        .serve(app)
-        .await
-        .unwrap();
+    axum_server::bind(addr).serve(app).await.unwrap();
 }
 
 async fn heavy_routing_middleware(addr: &'static str) {
@@ -120,10 +109,7 @@ async fn heavy_routing_middleware(addr: &'static str) {
         .route("/y", get(handler))
         .route("/z", get(handler));
 
-    axum_server::bind(addr)
-        .serve(app)
-        .await
-        .unwrap();
+    axum_server::bind(addr).serve(app).await.unwrap();
 }
 
 async fn handler() -> &'static str {
